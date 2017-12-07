@@ -5,11 +5,12 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <application>
+    <application android:name=".CustomApplication">
         <uses-library android:name="com.google.android.things" />
 
         <activity
             android:name=".MotionSensingActivity"
+
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -1,13 +1,13 @@
 package za.co.riggaroo.motioncamera
 
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Matrix
-import android.media.ImageReader
 import android.os.Bundle
 import android.os.Handler
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.widget.Button
 import android.widget.ImageView
 import com.google.android.things.pio.Gpio
 import com.google.android.things.pio.PeripheralManagerService
@@ -16,68 +16,100 @@ import za.co.riggaroo.motioncamera.camera.CustomCamera
 
 class MotionSensingActivity : AppCompatActivity(), MotionSensor.MotionListener {
 
-
-    private val ACT_TAG: String = "MotionSensingActivity"
-
-    private lateinit var ledGpio: Gpio
-
+    private lateinit var ledMotionIndicatorGpio: Gpio
+    private lateinit var ledArmedIndicatorGpio: Gpio
     private lateinit var camera: CustomCamera
-    private lateinit var motionImage: ImageView
+    private lateinit var motionImageView: ImageView
+    private lateinit var buttonArmSystem: Button
+    private lateinit var motionViewModel: MotionSensingViewModel
+    private lateinit var motionSensor: MotionSensor
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_motion_sensing)
+        setTitle(R.string.app_name)
+        setupViewModel()
+        setupCamera()
+        setupActuators()
+        setupSensors()
 
         setupUIElements()
-        setupCamera()
+    }
 
+    private fun setupViewModel() {
+        motionViewModel = ViewModelProviders.of(this).get(MotionSensingViewModel::class.java)
+    }
+
+    private fun setupSensors() {
+        motionSensor = MotionSensor(this, MOTION_SENSOR_GPIO_PIN)
+        lifecycle.addObserver(motionSensor)
+    }
+
+
+    private fun setupActuators() {
         val peripheralManagerService = PeripheralManagerService()
+        ledMotionIndicatorGpio = peripheralManagerService.openGpio(LED_GPIO_PIN)
+        ledMotionIndicatorGpio.setDirection(Gpio.DIRECTION_OUT_INITIALLY_LOW)
+        ledArmedIndicatorGpio = peripheralManagerService.openGpio(LED_ARMED_INDICATOR_PIN)
+        ledArmedIndicatorGpio.setDirection(Gpio.DIRECTION_OUT_INITIALLY_LOW)
+    }
 
-        ledGpio = peripheralManagerService.openGpio("GPIO_174")
-        ledGpio.setDirection(Gpio.DIRECTION_OUT_INITIALLY_LOW)
-
-        val motionSensorPin = peripheralManagerService.openGpio("GPIO_35")
-        lifecycle.addObserver(MotionSensor(this, motionSensorPin))
-
+    override fun onDestroy() {
+        super.onDestroy()
+        ledArmedIndicatorGpio.close()
+        ledMotionIndicatorGpio.close()
     }
 
     private fun setupUIElements() {
-        motionImage = findViewById(R.id.image_view_motion)
+        motionImageView = findViewById(R.id.image_view_motion)
 
-    }
+        buttonArmSystem = findViewById(R.id.button_arm_disarm)
+        buttonArmSystem.setOnClickListener {
+            motionViewModel.toggleSystemArmedStatus()
+        }
+        motionViewModel.armed.observe(this, Observer { armed ->
+            armed?.let {
+                buttonArmSystem.text = if (armed) {
+                    getString(R.string.disarm_system)
+                } else {
+                    getString(R.string.arm_system)
+                }
+                ledArmedIndicatorGpio.value = armed
+            }
 
-    private val onImageAvailableListener = ImageReader.OnImageAvailableListener { reader ->
-        val image = reader.acquireLatestImage()
-        val imageBuffer = image.planes[0].buffer
-        val imageBytes = ByteArray(imageBuffer.remaining())
-        imageBuffer.get(imageBytes)
-        image.close()
-
-        motionImage.setImageBitmap(getBitmapFromByteArray(imageBytes))
-        //write log to firebase
-
-    }
-
-    private fun getBitmapFromByteArray(imageBytes: ByteArray): Bitmap {
-        val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
-        val matrix = Matrix()
-        matrix.postRotate(180f)
-        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+        })
     }
 
     private fun setupCamera() {
         camera = CustomCamera.getInstance()
-        camera.initializeCamera(this, Handler(), onImageAvailableListener)
+        camera.initializeCamera(this, Handler(), imageAvailableListener)
+    }
+
+    private val imageAvailableListener = object : CustomCamera.ImageCapturedListener {
+        override fun onImageCaptured(bitmap: Bitmap) {
+            motionImageView.setImageBitmap(bitmap)
+            motionViewModel.uploadMotionImage(bitmap)
+        }
     }
 
     override fun onMotionDetected() {
         Log.d(ACT_TAG, "onMotionDetected")
+
+        ledMotionIndicatorGpio.value = true
+
         camera.takePicture()
-        ledGpio.value = true
     }
 
     override fun onMotionStopped() {
         Log.d(ACT_TAG, "onMotionStopped")
-        ledGpio.value = false
+        ledMotionIndicatorGpio.value = false
+    }
+
+
+    companion object {
+        val LED_ARMED_INDICATOR_PIN: String = "GPIO6_IO15"
+        val ACT_TAG: String = "MotionSensingActivity"
+        val LED_GPIO_PIN = "GPIO6_IO14"
+        val MOTION_SENSOR_GPIO_PIN = "GPIO2_IO03"
     }
 }
