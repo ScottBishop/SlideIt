@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'com.google.gms.google-services'
 
@@ -40,4 +41,11 @@ dependencies {
     api "com.firebaseui:firebase-ui-auth:4.2.1"
     api "com.firebaseui:firebase-ui-storage:4.2.1"
     api "com.firebaseui:firebase-ui:4.2.1"
+
+    implementation 'com.github.bumptech.glide:annotations:4.8.0'
+    implementation ('com.github.bumptech.glide:glide:4.8.0') {
+        exclude group: "com.android.support"
+    }
+    implementation "com.android.support:support-fragment:28.0.0"
+    kapt 'com.github.bumptech.glide:compiler:4.8.0'
 }

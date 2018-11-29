@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SwitchCompat
 import android.util.Log
 import android.widget.ImageView
+import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -36,16 +37,14 @@ class MainActivity : AppCompatActivity() {
         }
 
         armedValue.addValueEventListener(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {
+            }
+
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 Log.d(ACT_TAG, "onDataChange:" + dataSnapshot.toString())
-                val isArmed = dataSnapshot.value as Boolean
-                toggleUIState(isArmed)
+                val isArmed = dataSnapshot.value as? Boolean
+                toggleUIState(isArmed ?: false)
             }
-
-            override fun onCancelled(p0: DatabaseError?) {
-
-            }
-
         })
     }
 
@@ -70,17 +69,18 @@ class MainActivity : AppCompatActivity() {
         recyclerViewImages.isNestedScrollingEnabled = false
         val databaseRef = FirebaseDatabase.getInstance().getReference(MOTION_LOGS_FIREBASE_REF)
 
-        adapter = LogsAdapter(databaseRef.orderByChild(ORDER_BY_TIMESTAMP).ref)
+        val options = FirebaseRecyclerOptions.Builder<FirebaseImageLog>()
+                .setQuery(databaseRef.orderByChild(ORDER_BY_TIMESTAMP).ref, FirebaseImageLog::class.java)
+                .setLifecycleOwner(this)
+                .build()
+
+        adapter = LogsAdapter(options)
+
         val linearLayoutManager = LinearLayoutManager(this)
         linearLayoutManager.reverseLayout = true
         linearLayoutManager.stackFromEnd = true
         recyclerViewImages.layoutManager = linearLayoutManager
         recyclerViewImages.adapter = adapter
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        adapter.cleanup()
     }
 
     companion object {

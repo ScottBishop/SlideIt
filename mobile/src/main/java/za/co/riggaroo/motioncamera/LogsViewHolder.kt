@@ -6,9 +6,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
-import com.firebase.ui.storage.images.FirebaseImageLoader
 import com.google.firebase.storage.FirebaseStorage
-
 
 /**
  * @author rebeccafranks
@@ -24,11 +22,9 @@ class LogsViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         log.timestamp?.let {
             val timeDifference = DateUtils.getRelativeTimeSpanString(it, System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS)
             timeStampTextView.text = timeDifference
-
         }
         log.imageRef?.let {
-            Glide.with(imageViewLog.context)
-                    .using(FirebaseImageLoader())
+            GlideApp.with(imageViewLog.context)
                     .load(FirebaseStorage.getInstance().getReference(it))
                     .into(imageViewLog)
         }
@@ -39,8 +35,5 @@ class LogsViewHolder(view: View) : RecyclerView.ViewHolder(view) {
                 facesDetectedTextView.context.getString(R.string.no_faces_detected)
             }
         }
-
-
     }
-
 }
