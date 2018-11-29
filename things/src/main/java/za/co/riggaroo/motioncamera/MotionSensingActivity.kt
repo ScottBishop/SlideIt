@@ -10,7 +10,7 @@ import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
 import com.google.android.things.pio.Gpio
-import com.google.android.things.pio.PeripheralManagerService
+import com.google.android.things.pio.PeripheralManager
 import za.co.riggaroo.motioncamera.camera.CustomCamera
 
 
@@ -47,7 +47,7 @@ class MotionSensingActivity : AppCompatActivity(), MotionSensor.MotionListener {
 
 
     private fun setupActuators() {
-        val peripheralManagerService = PeripheralManagerService()
+        val peripheralManagerService = PeripheralManager.getInstance()
         ledMotionIndicatorGpio = peripheralManagerService.openGpio(LED_GPIO_PIN)
         ledMotionIndicatorGpio.setDirection(Gpio.DIRECTION_OUT_INITIALLY_LOW)
         ledArmedIndicatorGpio = peripheralManagerService.openGpio(LED_ARMED_INDICATOR_PIN)

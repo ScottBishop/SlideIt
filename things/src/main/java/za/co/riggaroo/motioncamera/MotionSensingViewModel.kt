@@ -18,7 +18,7 @@ class MotionSensingViewModel : ViewModel() {
 
     init {
         systemArmedFirebaseReference.addValueEventListener(object : ValueEventListener {
-            override fun onCancelled(p0: DatabaseError?) {
+            override fun onCancelled(p0: DatabaseError) {
 
             }
 
