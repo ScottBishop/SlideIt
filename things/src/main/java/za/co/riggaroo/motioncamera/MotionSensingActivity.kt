@@ -11,8 +11,6 @@ import android.widget.Button
 import android.widget.ImageView
 import com.google.android.things.pio.Gpio
 import com.google.android.things.pio.PeripheralManager
-import za.co.riggaroo.motioncamera.camera.CustomCamera
-
 
 class MotionSensingActivity : AppCompatActivity(), MotionSensor.MotionListener {
 

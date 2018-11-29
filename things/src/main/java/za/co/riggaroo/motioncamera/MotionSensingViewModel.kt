@@ -10,7 +10,6 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
 import java.io.ByteArrayOutputStream
 
-
 class MotionSensingViewModel : ViewModel() {
 
     var armed = SingleLiveEvent<Boolean>()

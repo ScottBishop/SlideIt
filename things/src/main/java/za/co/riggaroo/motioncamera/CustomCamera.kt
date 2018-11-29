@@ -1,4 +1,4 @@
-package za.co.riggaroo.motioncamera.camera
+package za.co.riggaroo.motioncamera
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -10,7 +10,6 @@ import android.hardware.camera2.CameraAccessException.CAMERA_ERROR
 import android.media.ImageReader
 import android.os.Handler
 import android.util.Log
-
 
 class CustomCamera : AutoCloseable {
 

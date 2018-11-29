@@ -4,7 +4,6 @@ import android.arch.lifecycle.Lifecycle
 import android.arch.lifecycle.LifecycleObserver
 import android.arch.lifecycle.OnLifecycleEvent
 import com.google.android.things.pio.Gpio
-import com.google.android.things.pio.GpioCallback
 import com.google.android.things.pio.PeripheralManager
 
 class MotionSensor(private val motionListener: MotionListener,
@@ -41,5 +40,4 @@ class MotionSensor(private val motionListener: MotionListener,
         fun onMotionDetected()
         fun onMotionStopped()
     }
-
 }
