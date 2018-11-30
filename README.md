@@ -18,6 +18,8 @@ From the `cloud-functions/functions` directory, you can run
 firebase deploy --project [project-id] --only functions
 ```
 
+![img_1580](https://user-images.githubusercontent.com/1944329/49309049-d15f0980-f48e-11e8-9914-6571ee1ee11e.jpg)
+
 #### NXP i.MX7D development kit
 https://developer.android.com/things/hardware/imx7d
 
