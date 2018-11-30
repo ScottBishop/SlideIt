@@ -11,6 +11,12 @@ Includes an Android mobile app connected to firebase to arm and disarm the bot a
 5. Firebase cloud functions hook for when an image is uploaded to the Firebase realtime database 
 6. Cloud function sends slack message with the image to a specified channel
 
+### Deploy cloud functions
+From the `cloud-functions/functions` directory, you can run
+```
+firebase deploy --project [project-id] --only functions
+```
+
 #### NXP i.MX7D development kit
 https://developer.android.com/things/hardware/imx7d
 
