@@ -72,6 +72,8 @@ class MotionSensingViewModel : ViewModel() {
     }
 
     fun toggleSystemArmedStatus() {
-
+        armed.value?.let { armed ->
+            systemArmedFirebaseReference.setValue(armed.not())
+        }
     }
 }
