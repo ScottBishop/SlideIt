@@ -24,7 +24,7 @@ class MotionSensor(private val motionListener: MotionListener,
         //Receive data from the sensor - DIRECTION_IN
         motionSensorGpioPin.setDirection(Gpio.DIRECTION_IN)
         //High voltage means movement has been detected
-        motionSensorGpioPin.setActiveType(Gpio.ACTIVE_HIGH)
+        motionSensorGpioPin.setActiveType(Gpio.ACTIVE_LOW)
         //The trigger we want to receive both low and high triggers so EDGE_BOTH
         motionSensorGpioPin.setEdgeTriggerType(Gpio.EDGE_RISING)
         motionSensorGpioPin.registerGpioCallback(gpioCallback)
