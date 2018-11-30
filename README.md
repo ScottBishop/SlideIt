@@ -1,10 +1,11 @@
 # SlideIt
-An android things motion sensor slackbot built with firebase realtime database, storage, cloud functions, and ML kit facial recognition.
+An Android Things motion sensor slackbot that takes pictures of people who go down the San Francisco slide and send the images to a specified slack channel.
 
-Includes an Android mobile app connected to firebase to arm and disarm the bot as well as view recent photos.
+It is built with firebase realtime database, storage, cloud functions, and ML Kit facial recognition.
+Includes an Android mobile app connected to firebase to arm and disarm the bot as well as view recently uploaded photos.
 
 ### Workflow
-1. Motion sensor detects motion
+1. Motion sensor detects a person going down the slide in our SF office.
 2. Image is taken
 3. Firebase ML Kit determines if it was a person with facial recognition
 4. If it was a person, it uploads the image to firebase realtime database
