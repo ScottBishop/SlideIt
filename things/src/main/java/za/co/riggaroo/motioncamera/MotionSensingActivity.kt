@@ -11,6 +11,9 @@ import android.widget.Button
 import android.widget.ImageView
 import com.google.android.things.pio.Gpio
 import com.google.android.things.pio.PeripheralManager
+import com.google.firebase.ml.vision.FirebaseVision
+import com.google.firebase.ml.vision.common.FirebaseVisionImage
+import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetectorOptions
 
 class MotionSensingActivity : AppCompatActivity(), MotionSensor.MotionListener {
 
@@ -95,8 +98,33 @@ class MotionSensingActivity : AppCompatActivity(), MotionSensor.MotionListener {
     private val imageAvailableListener = object : CustomCamera.ImageCapturedListener {
         override fun onImageCaptured(bitmap: Bitmap) {
             motionImageView.setImageBitmap(bitmap)
-            motionViewModel.uploadMotionImage(bitmap)
+            uploadIfFaceDetected(bitmap)
         }
+    }
+
+    private fun uploadIfFaceDetected(bitmap: Bitmap) {
+        val image = FirebaseVisionImage.fromBitmap(bitmap)
+        val highAccuracyOpts = FirebaseVisionFaceDetectorOptions.Builder()
+                .setPerformanceMode(FirebaseVisionFaceDetectorOptions.ACCURATE)
+                .setLandmarkMode(FirebaseVisionFaceDetectorOptions.NO_LANDMARKS)
+                .setContourMode(FirebaseVisionFaceDetectorOptions.NO_CONTOURS)
+                .setClassificationMode(FirebaseVisionFaceDetectorOptions.NO_CLASSIFICATIONS)
+                .build()
+        FirebaseVision.getInstance()
+                .getVisionFaceDetector(highAccuracyOpts)
+                .detectInImage(image)
+                .addOnSuccessListener { faces ->
+                    if (faces.isNullOrEmpty()) {
+                        Log.v("FaceDetection", "No face detected in image")
+                    } else {
+                        Log.v("FaceDetection", "Face detected!")
+                        // Face detected!
+                        motionViewModel.uploadMotionImage(bitmap)
+                    }
+                }
+                .addOnFailureListener {
+                    Log.e("FaceDetection", "Error processing face detection: $it")
+                }
     }
 
     override fun onMotionDetected() {

@@ -30,7 +30,7 @@ exports.sendImageToSlack = functions.database.ref('/motion-logs/{id}')
                 console.log("Face detected!", response);
                 var payload = {
                     json: {
-                        channel: "@scott.bishop",
+                        channel: functions.config().slack.channel,
                         icon_emoji: ":camera_with_flash:",
                         username: "SlideIt",
                         attachments: [
