@@ -22,6 +22,7 @@ class MotionSensingActivity : AppCompatActivity(), MotionSensor.MotionListener {
     private lateinit var buttonTakePhoto: Button
     private lateinit var motionViewModel: MotionSensingViewModel
     private lateinit var motionSensor: MotionSensor
+    private var armed: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,6 +75,7 @@ class MotionSensingActivity : AppCompatActivity(), MotionSensor.MotionListener {
 
         motionViewModel.armed.observe(this, Observer { armed ->
             armed?.let {
+                this.armed = armed
                 buttonArmSystem.text = if (armed) {
                     getString(R.string.disarm_system)
                 } else {
@@ -102,7 +104,9 @@ class MotionSensingActivity : AppCompatActivity(), MotionSensor.MotionListener {
 
         ledMotionIndicatorGpio.value = true
 
-        camera.takePicture()
+        if (armed) {
+            camera.takePicture()
+        }
     }
 
     override fun onMotionStopped() {
