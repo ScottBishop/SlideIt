@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name">MotionSense</string>
-    <string name="default_notification_channel_id">intruderChannel</string>
+    <string name="app_name">SlideIt</string>
+    <string name="default_notification_channel_id">sliders</string>
     <string name="faces_detected">faces detected</string>
     <string name="no_faces_detected">No faces detected</string>
     <string name="arm_system">Arm System</string>

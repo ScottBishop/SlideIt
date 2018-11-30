@@ -2,7 +2,7 @@
 
 var functions = require('firebase-functions');
 var admin = require('firebase-admin');
-var requestLib = require('request')
+var request = require('request')
 admin.initializeApp(functions.config().firebase);
 
 exports.sendImageToSlack = functions.database.ref('/motion-logs/{id}')
@@ -27,7 +27,7 @@ exports.sendImageToSlack = functions.database.ref('/motion-logs/{id}')
     console.log('Sending slack message', event.params.id, original);
     console.log('Slack message payload', payload);
 
-    return requestLib.post(
+    return request.post(
         functions.config().slack.webhook,
         payload
     );
@@ -36,22 +36,16 @@ exports.sendImageToSlack = functions.database.ref('/motion-logs/{id}')
 exports.annotateImage = functions.database.ref('/motion-logs/{id}')
   .onCreate(event => {
     const original = event.data.val();
+    const downloadUrl = original.downloadUrl;
     console.log('AnnotatingImage', event.params.id, original);
-    const fileName = 'gs://slideit-5c095.appspot.com' + original.imageRef;
-    console.log('Filename:', fileName)
-    const request = {
-      source: {
-        imageUri: fileName
-      }
-    };
 
-    var topic = "/topics/intruders";
+    var topic = "/topics/sliders";
 
     var payload = {
       data: {
-        title: "Intruder Alert!",
-        body: "An intruder has been detected",
-        imageRef: original.imageRef,
+        title: "Slider Alert!",
+        body: "A slider has been detected",
+        image: downloadUrl,
         timestamp: original.timestamp.toString()
       }
     };
