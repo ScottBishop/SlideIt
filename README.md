@@ -1,5 +1,5 @@
 # SlideIt
-An Android Things motion sensor that takes a picture of someone going down the San Francisco slide and send the image to a specified slack channel.
+An Android Things motion sensor that takes a picture of someone going down the San Francisco slide and sends the image to a specified slack channel.
 
 It is built with firebase realtime database, storage, cloud functions, and ML Kit facial recognition.
 Includes an Android mobile app connected to firebase to arm and disarm the bot as well as view recently uploaded photos.
