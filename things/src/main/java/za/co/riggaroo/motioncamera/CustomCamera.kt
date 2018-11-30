@@ -69,10 +69,7 @@ class CustomCamera : AutoCloseable {
 
     private fun getBitmapFromByteArray(imageBytes: ByteArray): Bitmap {
         val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
-        val matrix = Matrix()
-        //For some reason the bitmap is rotated the incorrect way
-        matrix.postRotate(180f)
-        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, Matrix(), true)
     }
 
     private fun triggerImageCapture() {
