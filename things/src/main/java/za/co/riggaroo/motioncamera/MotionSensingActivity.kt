@@ -19,6 +19,7 @@ class MotionSensingActivity : AppCompatActivity(), MotionSensor.MotionListener {
     private lateinit var camera: CustomCamera
     private lateinit var motionImageView: ImageView
     private lateinit var buttonArmSystem: Button
+    private lateinit var buttonTakePhoto: Button
     private lateinit var motionViewModel: MotionSensingViewModel
     private lateinit var motionSensor: MotionSensor
 
@@ -65,6 +66,12 @@ class MotionSensingActivity : AppCompatActivity(), MotionSensor.MotionListener {
         buttonArmSystem.setOnClickListener {
             motionViewModel.toggleSystemArmedStatus()
         }
+
+        buttonTakePhoto = findViewById(R.id.button_take_photo)
+        buttonTakePhoto.setOnClickListener {
+            camera.takePicture()
+        }
+
         motionViewModel.armed.observe(this, Observer { armed ->
             armed?.let {
                 buttonArmSystem.text = if (armed) {
